@@ -21,6 +21,7 @@ export function formatDate(iso: string): string {
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   CREATED: 'Em aberto',
+  AWAITING_PAYMENT: 'Aguardando pagamento',
   PAID: 'Pago',
   CANCELLED: 'Cancelado',
   COMPLETED: 'Concluido',
@@ -28,6 +29,7 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
 
 export const ORDER_STATUS_STYLE: Record<OrderStatus, string> = {
   CREATED: 'bg-amber-100 text-amber-800',
+  AWAITING_PAYMENT: 'bg-purple-100 text-purple-800',
   PAID: 'bg-blue-100 text-blue-800',
   CANCELLED: 'bg-red-100 text-red-800',
   COMPLETED: 'bg-green-100 text-green-800',

@@ -83,7 +83,6 @@ export function AdminProductFormPage() {
         await productsService.update(id, form);
       } else {
         const created = await productsService.create(form);
-        // Se um arquivo foi escolhido na criacao, faz o upload em seguida.
         if (imageFile) {
           await productsService.uploadImage(created.id, imageFile);
         }

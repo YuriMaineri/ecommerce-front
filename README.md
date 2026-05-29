@@ -52,7 +52,7 @@ O backend traz um admin via seed:
 - Catálogo público de produtos em **cards**, com **busca** e **filtro por categoria**.
 - Página de detalhe do produto.
 - **Carrinho de compras** (cria/edita/remove itens via API de pedidos).
-- **Checkout** (finaliza o pedido: `CREATED → PAID`).
+- **Pagamento simulado via webhook** (ver seção abaixo).
 - Histórico de **pedidos** e cancelamento de pedidos em aberto.
 
 ### Admin (ADMIN)
@@ -65,6 +65,24 @@ O backend traz um admin via seed:
 - **Rotas protegidas** por autenticação e por papel (ADMIN/CUSTOMER).
 - **Validação de formulários** com campos obrigatórios e feedback de erro.
 - Tratamento de erros da API e estados de carregamento.
+
+## Fluxo de pagamento (simulado via webhook)
+
+O fluxo completo do pedido: **criar pedido → adicionar itens → ir para pagamento → aprovado ou recusado**.
+
+1. No carrinho, "Ir para pagamento" chama `POST /orders/:id/checkout` — o pedido passa de `CREATED` para `AWAITING_PAYMENT` e o backend cria um `Payment` pendente com uma referência.
+2. A tela de pagamento (`/payment/:orderId`) é um **gateway simulado**: ao enviar o cartão, chama `POST /gateway/charge`, que decide o desfecho e **notifica o webhook** (`POST /webhooks/payments`) de forma assíncrona — exatamente como um provedor real faz.
+3. O webhook (idempotente) atualiza o pedido: aprovado → `PAID`; recusado → volta para `CREATED` (carrinho preservado). A tela faz *polling* do status até exibir o resultado.
+
+**Cartões de teste:**
+
+- `4242 4242 4242 4242` → pagamento **aprovado**
+- `4000 0000 0000 0002` → pagamento **recusado**
+
+> Importante: este recurso adiciona a entidade `Payment` e o status `AWAITING_PAYMENT` no backend. Antes de testar, rode no projeto do backend:
+> ```bash
+> npx prisma migrate dev --name add_payments
+> ```
 
 ## Estrutura
 

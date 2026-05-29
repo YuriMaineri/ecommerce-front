@@ -8,7 +8,7 @@ import { useCart } from '../hooks/useCart';
 import { formatCurrency } from '../utils/format';
 
 export function CartPage() {
-  const { cart, loading, updateItem, removeItem, checkout } = useCart();
+  const { cart, loading, updateItem, removeItem, beginCheckout } = useCart();
   const navigate = useNavigate();
 
   const [names, setNames] = useState<Record<string, string>>({});
@@ -61,10 +61,11 @@ export function CartPage() {
     setCheckingOut(true);
     setError('');
     try {
-      await checkout();
-      navigate('/orders');
+      const { orderId, reference, amount } = await beginCheckout();
+      // Segue para a tela de pagamento (gateway simulado).
+      navigate(`/payment/${orderId}`, { state: { reference, amount } });
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Nao foi possivel finalizar o pedido.'));
+      setError(getApiErrorMessage(err, 'Nao foi possivel iniciar o pagamento.'));
       setCheckingOut(false);
     }
   }
@@ -145,7 +146,7 @@ export function CartPage() {
             <span>{formatCurrency(cart.totalAmount)}</span>
           </div>
           <button className="btn-primary mt-6 w-full" onClick={handleCheckout} disabled={checkingOut}>
-            {checkingOut ? 'Finalizando...' : 'Finalizar pedido'}
+            {checkingOut ? 'Processando...' : 'Ir para pagamento'}
           </button>
           <Link to="/" className="btn-secondary mt-2 w-full">
             Continuar comprando

@@ -66,10 +66,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [cart],
   );
 
-  const checkout = useCallback(async () => {
-    if (!cart) return;
-    await ordersService.updateStatus(cart.id, 'PAID');
+  const beginCheckout = useCallback(async () => {
+    if (!cart) throw new Error('Carrinho vazio.');
+    const result = await ordersService.checkout(cart.id);
+    // O pedido saiu de CREATED (foi para AWAITING_PAYMENT); limpa o carrinho ativo.
     setCart(null);
+    return result;
   }, [cart]);
 
   const cancelCart = useCallback(async () => {
@@ -84,8 +86,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<CartContextValue>(
-    () => ({ cart, loading, itemCount, addToCart, updateItem, removeItem, checkout, cancelCart, refresh }),
-    [cart, loading, itemCount, addToCart, updateItem, removeItem, checkout, cancelCart, refresh],
+    () => ({ cart, loading, itemCount, addToCart, updateItem, removeItem, beginCheckout, cancelCart, refresh }),
+    [cart, loading, itemCount, addToCart, updateItem, removeItem, beginCheckout, cancelCart, refresh],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

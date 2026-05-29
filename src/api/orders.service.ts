@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { Order, OrderStatus } from '../types';
+import type { CheckoutResponse, Order, OrderStatus } from '../types';
 
 export const ordersService = {
   async list(): Promise<Order[]> {
@@ -35,6 +35,12 @@ export const ordersService = {
 
   async updateStatus(orderId: string, status: OrderStatus): Promise<Order> {
     const { data } = await api.patch<Order>(`/orders/${orderId}/status`, { status });
+    return data;
+  },
+
+  /** Envia o pedido para pagamento: CREATED -> AWAITING_PAYMENT. Retorna a referencia do pagamento. */
+  async checkout(orderId: string): Promise<CheckoutResponse> {
+    const { data } = await api.post<CheckoutResponse>(`/orders/${orderId}/checkout`);
     return data;
   },
 

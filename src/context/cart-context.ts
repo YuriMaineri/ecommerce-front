@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Order } from '../types';
+import type { CheckoutResponse, Order } from '../types';
 
 export interface CartContextValue {
   cart: Order | null;
@@ -9,8 +9,8 @@ export interface CartContextValue {
   addToCart: (productId: string, quantity?: number) => Promise<void>;
   updateItem: (itemId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
-  /** Finaliza o pedido (CREATED -> PAID). */
-  checkout: () => Promise<void>;
+  /** Envia o pedido para pagamento (CREATED -> AWAITING_PAYMENT) e retorna a referencia. */
+  beginCheckout: () => Promise<CheckoutResponse>;
   /** Cancela o carrinho atual. */
   cancelCart: () => Promise<void>;
   refresh: () => Promise<void>;

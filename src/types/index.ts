@@ -2,7 +2,7 @@
 
 export type UserRole = 'ADMIN' | 'CUSTOMER';
 
-export type OrderStatus = 'CREATED' | 'PAID' | 'CANCELLED' | 'COMPLETED';
+export type OrderStatus = 'CREATED' | 'AWAITING_PAYMENT' | 'PAID' | 'CANCELLED' | 'COMPLETED';
 
 export interface User {
   id: string;
@@ -100,4 +100,16 @@ export interface UpdateUserPayload {
   name?: string;
   email?: string;
   password?: string;
+}
+
+export interface CheckoutResponse {
+  orderId: string;
+  reference: string;
+  amount: number;
+  orderStatus: OrderStatus;
+}
+
+export interface GatewayChargeResponse {
+  status: string;
+  reference: string;
 }

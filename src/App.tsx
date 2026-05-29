@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CartPage } from './pages/CartPage';
+import { PaymentPage } from './pages/PaymentPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AdminLayout } from './pages/admin/AdminLayout';
@@ -29,6 +30,14 @@ function App() {
           element={
             <ProtectedRoute requireRole="CUSTOMER">
               <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="payment/:orderId"
+          element={
+            <ProtectedRoute requireRole="CUSTOMER">
+              <PaymentPage />
             </ProtectedRoute>
           }
         />
