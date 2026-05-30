@@ -4,12 +4,20 @@ import { getApiErrorMessage } from '../../api/client';
 import { productsService } from '../../api/products.service';
 import { Alert } from '../../components/Alert';
 import { Modal } from '../../components/Modal';
+import { Pagination } from '../../components/Pagination';
 import { Spinner } from '../../components/Spinner';
 import type { Product } from '../../types';
 import { formatCurrency } from '../../utils/format';
 
+const PAGE_SIZE = 10;
+
 export function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [toDelete, setToDelete] = useState<Product | null>(null);
@@ -18,17 +26,34 @@ export function AdminProductsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setProducts(await productsService.list());
+      // Admin ve todos (ativos e inativos); sem filtro de "active".
+      const res = await productsService.list({
+        page,
+        pageSize: PAGE_SIZE,
+        ...(search.trim() ? { search: search.trim() } : {}),
+      });
+      setProducts(res.items);
+      setTotal(res.total);
+      setTotalPages(res.totalPages);
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Debounce da busca.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
   async function confirmDelete() {
     if (!toDelete) return;
@@ -60,10 +85,18 @@ export function AdminProductsPage() {
         </div>
       )}
 
+      <input
+        type="search"
+        className="input mb-4 sm:max-w-xs"
+        placeholder="Buscar por nome..."
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+
       {loading ? (
         <Spinner />
       ) : products.length === 0 ? (
-        <p className="py-12 text-center text-slate-500">Nenhum produto cadastrado.</p>
+        <p className="py-12 text-center text-slate-500">Nenhum produto encontrado.</p>
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full text-left text-sm">
@@ -106,6 +139,10 @@ export function AdminProductsPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {!loading && products.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} total={total} onChange={setPage} />
       )}
 
       <Modal open={Boolean(toDelete)} title="Excluir produto" onClose={() => setToDelete(null)}>

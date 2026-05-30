@@ -20,4 +20,14 @@ export const usersService = {
   async remove(id: string): Promise<void> {
     await api.delete(`/users/${id}`);
   },
+
+  async listDeleted(): Promise<User[]> {
+    const { data } = await api.get<User[]>('/users/deleted');
+    return data;
+  },
+
+  async restore(id: string): Promise<User> {
+    const { data } = await api.post<User>(`/users/${id}/restore`);
+    return data;
+  },
 };

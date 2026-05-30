@@ -25,4 +25,14 @@ export const categoriesService = {
   async remove(id: string): Promise<void> {
     await api.delete(`/categories/${id}`);
   },
+
+  async listDeleted(): Promise<Category[]> {
+    const { data } = await api.get<Category[]>('/categories/deleted');
+    return data;
+  },
+
+  async restore(id: string): Promise<Category> {
+    const { data } = await api.post<Category>(`/categories/${id}/restore`);
+    return data;
+  },
 };

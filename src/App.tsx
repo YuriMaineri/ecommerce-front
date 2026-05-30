@@ -13,6 +13,8 @@ import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminProductsPage } from './pages/admin/AdminProductsPage';
 import { AdminProductFormPage } from './pages/admin/AdminProductFormPage';
 import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { AdminTrashPage } from './pages/admin/AdminTrashPage';
 
 function App() {
   return (
@@ -64,6 +66,8 @@ function App() {
           <Route path="products/new" element={<AdminProductFormPage />} />
           <Route path="products/:id" element={<AdminProductFormPage />} />
           <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="trash" element={<AdminTrashPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

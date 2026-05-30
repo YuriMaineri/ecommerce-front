@@ -1,14 +1,15 @@
 import { api } from './client';
-import type { CreateProductPayload, Product, UpdateProductPayload } from '../types';
+import type {
+  CreateProductPayload,
+  Paginated,
+  Product,
+  ProductListParams,
+  UpdateProductPayload,
+} from '../types';
 
 export const productsService = {
-  async list(): Promise<Product[]> {
-    const { data } = await api.get<Product[]>('/products');
-    return data;
-  },
-
-  async listByCategory(categoryId: string): Promise<Product[]> {
-    const { data } = await api.get<Product[]>(`/products/category/${categoryId}`);
+  async list(params: ProductListParams = {}): Promise<Paginated<Product>> {
+    const { data } = await api.get<Paginated<Product>>('/products', { params });
     return data;
   },
 
@@ -29,6 +30,16 @@ export const productsService = {
 
   async remove(id: string): Promise<void> {
     await api.delete(`/products/${id}`);
+  },
+
+  async listDeleted(): Promise<Product[]> {
+    const { data } = await api.get<Product[]>('/products/deleted');
+    return data;
+  },
+
+  async restore(id: string): Promise<Product> {
+    const { data } = await api.post<Product>(`/products/${id}/restore`);
+    return data;
   },
 
   async uploadImage(id: string, file: File): Promise<Product> {

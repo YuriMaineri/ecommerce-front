@@ -17,6 +17,12 @@ export function AdminLayout() {
           <NavLink to="/admin/categories" className={linkClass}>
             Categorias
           </NavLink>
+          <NavLink to="/admin/users" className={linkClass}>
+            Usuarios
+          </NavLink>
+          <NavLink to="/admin/trash" className={linkClass}>
+            Lixeira
+          </NavLink>
         </nav>
       </aside>
       <section>

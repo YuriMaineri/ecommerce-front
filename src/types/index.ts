@@ -100,6 +100,7 @@ export interface UpdateUserPayload {
   name?: string;
   email?: string;
   password?: string;
+  role?: UserRole;
 }
 
 export interface CheckoutResponse {
@@ -112,4 +113,24 @@ export interface CheckoutResponse {
 export interface GatewayChargeResponse {
   status: string;
   reference: string;
+}
+
+export interface Paginated<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface ProductListParams {
+  search?: string;
+  categoryId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  active?: boolean;
+  sortBy?: 'createdAt' | 'price' | 'name';
+  order?: 'asc' | 'desc';
+  page?: number;
+  pageSize?: number;
 }
